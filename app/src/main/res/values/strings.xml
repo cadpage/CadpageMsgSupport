@@ -1,0 +1,13 @@
+<resources>
+  <string name="app_name">Cadpage Msg Support</string>
+
+  <string name="req_permission_text">
+    OK folks.  My entire purpose in life is to support the Cadpage app by collecting the text
+    message information that it is no longer permitted to.  Which I can not do unless you grant
+    me permission to access SMS messages.  So would you please let me do that?
+  </string>
+
+  <string name="req_permission_button">
+    Sure, why not!
+  </string>
+</resources>
