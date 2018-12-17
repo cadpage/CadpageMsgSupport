@@ -1,0 +1,11 @@
+<resources>
+  <string name="app_name">Cadpage Msg Support</string>
+
+  <string name="req_permission_text">
+    OK gott folk. Meningen med mitt liv är ge Cadpage appen support genom att samla in textmeddelandeinformation som den inte längre är tillåten att göra. Jag kan inte göra det om du inte ger mig access till SMS-meddelanden. Skulle du vilja vara så vänlig att ge mig det?
+  </string>
+
+  <string name="req_permission_button">
+    Visst, varför inte!
+  </string>
+</resources>

@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     // If that is the case, we can quietly shut down.  If we were not started from Cadpage, start
     // Cadpage ourselves
     if (checkPermissions(true)) {
+      Log.v("Cadpage message support enabled");
       if (!launchedFromCadpage) launchCadpage();
       finish();
     }
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     if (checkPermissions(false)) {
+      Log.v("Cadpage message support enabled");
       if (!launchedFromCadpage) launchCadpage();
       finish();
     }
