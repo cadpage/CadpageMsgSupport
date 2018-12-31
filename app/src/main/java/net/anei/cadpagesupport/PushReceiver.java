@@ -15,7 +15,7 @@ public class PushReceiver extends BroadcastReceiver {
 
     // Pass intent on to Cadpage
     intent.setAction(intent.getAction().replace("android.provider", "net.anei.cadpage"));
-    intent.setPackage("net.anei.cadpage");
+    intent.setClassName("net.anei.cadpage", "net.anei.cadpage.PushReceiver");
     context.sendBroadcast(intent);
   }
 }

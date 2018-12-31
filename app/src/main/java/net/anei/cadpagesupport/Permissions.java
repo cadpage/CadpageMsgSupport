@@ -13,7 +13,7 @@ import android.os.Build;
 public class Permissions {
   
   public interface Worker {
-    public boolean isGranted(Context context, String permissioin);
+    public boolean isGranted(Context context, String permission);
     public boolean shouldShowRequestPermissionRationale(Activity activity, String permission);
     public void requestPermissions(Activity activity, String[] permissions, int requestId);
   }
@@ -50,7 +50,7 @@ public class Permissions {
   private static class Regular implements Worker {
   
     @Override
-    public boolean isGranted(Context context, String permissioin) {
+    public boolean isGranted(Context context, String permission) {
       return true;
     }
   
