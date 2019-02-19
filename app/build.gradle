@@ -6,12 +6,12 @@ android {
         applicationId "net.anei.cadpagesupport"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 14
-        versionName "1.4"
+        versionCode 15
+        versionName "1.5"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

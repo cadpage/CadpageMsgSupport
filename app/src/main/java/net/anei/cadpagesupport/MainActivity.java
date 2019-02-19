@@ -1,11 +1,11 @@
 package net.anei.cadpagesupport;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +13,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
   private boolean launchedFromCadpage;
 
@@ -55,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
   private static final String[] REQ_PERMISSIONS = new String[]{
     "android.permission.READ_SMS",
     "android.permission.RECEIVE_SMS",
-    "android.permission.RECEIVE_MMS"
+    "android.permission.RECEIVE_MMS",
+    "android.permission.SEND_SMS"
   };
 
   /**
