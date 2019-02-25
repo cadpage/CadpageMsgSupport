@@ -10,6 +10,7 @@
   <uses-permission android:name="android.permission.RECEIVE_SMS"/>
   <uses-permission android:name="android.permission.RECEIVE_MMS"/>
   <uses-permission android:name="android.permission.SEND_SMS"/>
+  <uses-permission android:name="android.permission.CALL_PHONE"/>
 
   <supports-screens android:xlargeScreens="true"/>
 
@@ -43,6 +44,7 @@
     <receiver android:name=".ResponseSender"
              android:permission="net.anei.cadpagesupport.permission.CONTENT_QUERY">
       <intent-filter>
+        <action android:name="net.anei.cadpagesupport.CALL_PHONE"/>
         <action android:name="net.anei.cadpagesupport.SendSMS"/>
         <action android:name="net.anei.cadpagesupport.ResponseSender.SMS_SENT"/>
         <action android:name="net.anei.cadpagesupport.ResponseSender.SMS_DELIVERED"/>

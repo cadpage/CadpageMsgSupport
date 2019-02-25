@@ -5,10 +5,14 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.telephony.SmsManager;
 
 public class ResponseSender extends BroadcastReceiver {
 
+  private static final String CALL_PHONE = "net.anei.cadpagesupport.CALL_PHONE";
   private static final String SEND_SMS = "net.anei.cadpagesupport.SendSMS";
   private static final String SMS_SENT = "net.anei.cadpagesupport.ResponseSender.SMS_SENT";
   private static final String SMS_DELIVERED = "net.anei.cadpagesupport.ResponseSender.SMS_DELIVERED";
@@ -16,7 +20,11 @@ public class ResponseSender extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
 
-    if (SEND_SMS.equals(intent.getAction())) {
+    if (CALL_PHONE.equals(intent.getAction())) {
+      String phone = intent.getStringExtra("phone");
+      callPhone(context, phone);
+    }
+    else if (SEND_SMS.equals(intent.getAction())) {
       String target = intent.getStringExtra("target");
       String message = intent.getStringExtra("message");
       if (target == null || message == null) return;
@@ -30,13 +38,39 @@ public class ResponseSender extends BroadcastReceiver {
 
   }
 
+  private void callPhone(Context context, String phone) {
+
+    String action = Intent.ACTION_CALL;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+      if (context.checkSelfPermission("android.permission.CALL_PHONE") != PackageManager.PERMISSION_GRANTED) {
+        action = Intent.ACTION_DIAL;
+      }
+    }
+    try {
+      String urlPhone = "tel:" + phone;
+      Intent intent = new Intent(Intent.ACTION_CALL);
+      intent.setData(Uri.parse(urlPhone));
+      intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+      context.startActivity(intent);
+    } catch (Exception e) {
+      Log.v("SMSPopupActivity: Phone call failed" + e.getMessage());
+    }
+  }
+
   /**
    * Send SMS response message
-   * @param context curent context
+   * @param context current context
    * @param target target phone number or address
    * @param message message to be sent
    */
   private void sendSMS(Context context, String target, String message){
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+      if (context.checkSelfPermission("android.permission.SEND_SMS") != PackageManager.PERMISSION_GRANTED) {
+        Log.e("sendSMS aborted - SEND_SMS permission has not been granted");
+        return;
+      }
+    }
 
     Intent sendIntent = new Intent(SMS_SENT);
     sendIntent.setFlags(Intent.FLAG_DEBUG_LOG_RESOLUTION);

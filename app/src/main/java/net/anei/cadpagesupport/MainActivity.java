@@ -1,6 +1,5 @@
 package net.anei.cadpagesupport;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,45 +7,55 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
 
-  private boolean launchedFromCadpage;
+  private boolean needPhoneSupport;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    Intent intent = getIntent();
-    launchedFromCadpage = intent.getBooleanExtra("net.anei.cadpage.LAUNCH", false);
-
-    // Our only purpose is to ensure that the required permissions have been granted
-    // If that is the case, we can quietly shut down.  If we were not started from Cadpage, start
-    // Cadpage ourselves
-    if (checkPermissions(true)) {
-      Log.v("Cadpage message support enabled");
-      if (!launchedFromCadpage) launchCadpage();
-      finish();
-    }
-
     // Otherwise handle the button that requests the required permissions
-    ((Button)findViewById(R.id.req_button)).setOnClickListener(new View.OnClickListener(){
+    findViewById(R.id.req_button).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         checkPermissions(true);
       }
     });
+
+    process(getIntent());
   }
 
   @Override
-  protected void onStart() {
+  public void onNewIntent(Intent intent) {
+    setIntent(intent);
+    process(intent);
+  }
 
-    super.onStart();
+  private void process(Intent intent) {
+
+    boolean launchedFromCadpage = intent.getBooleanExtra("net.anei.cadpage.LAUNCH", false);
+    needPhoneSupport = intent.getBooleanExtra("net.anei.cadpage.CALL_PHONE", false);
+
+    // If we were not launched from Cadpage, do nothing except launch Cadpage and terminate
+    // Cadpage will immediately turn around and ask us to set up the correct permissions
+    if (!launchedFromCadpage) {
+      launchCadpage();
+      finish();
+    }
+
+    // If we were launched from Cadpage,
+    // our only purpose is to ensure that the required permissions have been granted
+    // If that is the case, we can quietly shut down.
+    if (checkPermissions(true)) {
+      Log.v("Cadpage message support enabled");
+      finish();
+    }
   }
 
   private static final int PERM_REQ_ID = 3421;
@@ -64,7 +73,6 @@ public class MainActivity extends Activity {
    * @param request true if user should be asked to grant missing permissions
    * @return true if they have, false otherwise
    */
-  @TargetApi(23)
   private boolean checkPermissions(boolean request) {
 
     // If run time permissions are not implemented, the answer is always yes
@@ -76,9 +84,14 @@ public class MainActivity extends Activity {
       if (checkSelfPermission(perm) != PackageManager.PERMISSION_GRANTED) missingPerms.add(perm);
     }
 
+    if (needPhoneSupport) {
+      String perm = "android.permission.CALL_PHONE";
+      if (checkSelfPermission(perm) != PackageManager.PERMISSION_GRANTED) missingPerms.add(perm);
+    }
+
     if (missingPerms.isEmpty()) return true;
 
-    if (request) requestPermissions(REQ_PERMISSIONS, PERM_REQ_ID);
+    if (request) requestPermissions(missingPerms.toArray(new String[0]), PERM_REQ_ID);
     return false;
   }
 
@@ -87,7 +100,6 @@ public class MainActivity extends Activity {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     if (checkPermissions(false)) {
       Log.v("Cadpage message support enabled");
-      if (!launchedFromCadpage) launchCadpage();
       finish();
     }
   }
