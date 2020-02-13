@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.TextUtils;
 
 public class ResponseSender extends BroadcastReceiver {
 
   private static final String CALL_PHONE = "net.anei.cadpagesupport.CALL_PHONE";
   private static final String SEND_SMS = "net.anei.cadpagesupport.SendSMS";
+  private static final String MMS_DOWNLOAD = "net.anei.cadpagesupport.MMS_DOWNLOAD";
   private static final String SMS_SENT = "net.anei.cadpagesupport.ResponseSender.SMS_SENT";
   private static final String SMS_DELIVERED = "net.anei.cadpagesupport.ResponseSender.SMS_DELIVERED";
 
@@ -31,11 +34,19 @@ public class ResponseSender extends BroadcastReceiver {
 
       sendSMS(context, target, message);
     }
+    else if (MMS_DOWNLOAD.equals(intent.getAction())) {
+      Uri downloadUri = intent.getData();
+      String content = intent.getStringExtra("content_uri");
+      String downloadStr = intent.getStringExtra("download_uri");
+      int subscriptionId = intent.getIntExtra("subscription_id", -1);
+      PendingIntent pIntent = intent.getParcelableExtra("report_intent");
+      if (content == null || downloadUri == null) return;
+      mmsDownload(context, content, downloadUri, subscriptionId, pIntent);
+    }
 
     else {
       reportResult(intent);
     }
-
   }
 
   private void callPhone(Context context, String phone) {
@@ -48,9 +59,9 @@ public class ResponseSender extends BroadcastReceiver {
     }
     try {
       String urlPhone = "tel:" + phone;
-      Intent intent = new Intent(Intent.ACTION_CALL);
+      Intent intent = new Intent(action);
       intent.setData(Uri.parse(urlPhone));
-      intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       context.startActivity(intent);
     } catch (Exception e) {
       Log.v("SMSPopupActivity: Phone call failed" + e.getMessage());
@@ -91,6 +102,44 @@ public class ResponseSender extends BroadcastReceiver {
 
       Log.e(ex);
     }
+  }
+
+  private void mmsDownload(Context context, String content, Uri downloadUri, int subscriptionId, PendingIntent pIntent) {
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+      Log.e("MMS download not supported before Lollipop");
+      return;
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+      if (context.checkSelfPermission("android.permission.RECEIVE_MMS") != PackageManager.PERMISSION_GRANTED) {
+        Log.e("Download MMS aborted - RECEIVE_MMS permission has not been granted");
+        return;
+      }
+    }
+
+    SmsManager smsManager;
+    if (subscriptionId != -1) {
+      smsManager = SmsManager.getSmsManagerForSubscriptionId(subscriptionId);
+    } else {
+      smsManager = SmsManager.getDefault();
+    }
+
+    final Bundle configOverrides = smsManager.getCarrierConfigValues();
+
+    if (TextUtils.isEmpty(configOverrides.getString(SmsManager.MMS_CONFIG_USER_AGENT))) {
+      configOverrides.remove(SmsManager.MMS_CONFIG_USER_AGENT);
+    }
+
+    if (TextUtils.isEmpty(configOverrides.getString(SmsManager.MMS_CONFIG_UA_PROF_URL))) {
+      configOverrides.remove(SmsManager.MMS_CONFIG_UA_PROF_URL);
+    }
+
+    smsManager.downloadMultimediaMessage(context,
+        content,
+        downloadUri,
+        configOverrides,
+        pIntent);
   }
 
   private void reportResult(Intent intent) {

@@ -6,8 +6,8 @@ android {
         applicationId "net.anei.cadpagesupport"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 16
-        versionName "1.6"
+        versionCode 17
+        versionName "1.7"
     }
     buildTypes {
         release {

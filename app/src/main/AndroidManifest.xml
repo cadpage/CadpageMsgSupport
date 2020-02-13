@@ -46,6 +46,7 @@
       <intent-filter>
         <action android:name="net.anei.cadpagesupport.CALL_PHONE"/>
         <action android:name="net.anei.cadpagesupport.SendSMS"/>
+        <action android:name="net.anei.cadpagesupport.MMS_DOWNLOAD"/>
         <action android:name="net.anei.cadpagesupport.ResponseSender.SMS_SENT"/>
         <action android:name="net.anei.cadpagesupport.ResponseSender.SMS_DELIVERED"/>
       </intent-filter>
