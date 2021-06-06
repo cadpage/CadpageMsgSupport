@@ -30,6 +30,7 @@
         <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
       </intent-filter>
     </receiver>
+
     <receiver android:name=".PushReceiver">
       <intent-filter android:priority="2147483647">
         <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED"/>
@@ -40,6 +41,10 @@
     <service android:name=".ContentService"
              android:exported="true"
              android:permission="net.anei.cadpagesupport.permission.CONTENT_QUERY"/>
+
+    <service android:name=".ResponseSenderService"
+        android:exported="true"
+        android:permission="net.anei.cadpagesupport.permission.CONTENT_QUERY"/>
 
     <receiver android:name=".ResponseSender"
              android:permission="net.anei.cadpagesupport.permission.CONTENT_QUERY">
