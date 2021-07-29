@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="net.anei.cadpagesupport">
 
-  <permission
-    android:name="net.anei.cadpagesupport.permission.CONTENT_QUERY"
-    android:protectionLevel="signature"/>
-
   <uses-permission android:name="android.permission.READ_SMS"/>
   <uses-permission android:name="android.permission.RECEIVE_SMS"/>
   <uses-permission android:name="android.permission.RECEIVE_MMS"/>
@@ -39,15 +35,12 @@
     </receiver>
 
     <service android:name=".ContentService"
-             android:exported="true"
-             android:permission="net.anei.cadpagesupport.permission.CONTENT_QUERY"/>
+             android:exported="true"/>
 
     <service android:name=".ResponseSenderService"
-        android:exported="true"
-        android:permission="net.anei.cadpagesupport.permission.CONTENT_QUERY"/>
+        android:exported="true"/>
 
-    <receiver android:name=".ResponseSender"
-             android:permission="net.anei.cadpagesupport.permission.CONTENT_QUERY">
+    <receiver android:name=".ResponseSender">
       <intent-filter>
         <action android:name="net.anei.cadpagesupport.CALL_PHONE"/>
         <action android:name="net.anei.cadpagesupport.SendSMS"/>
