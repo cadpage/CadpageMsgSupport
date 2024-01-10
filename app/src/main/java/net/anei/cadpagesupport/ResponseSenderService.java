@@ -77,11 +77,11 @@ public class ResponseSenderService extends Service {
     Intent sendIntent = new Intent(SMS_SENT);
     sendIntent.setFlags(Intent.FLAG_DEBUG_LOG_RESOLUTION);
     sendIntent.setClassName("net.anei.cadpagesupport", "net.anei.cadpagesupport.ResponseSender");
-    PendingIntent sentPI = PendingIntent.getBroadcast(context, 0, sendIntent, 0);
+    PendingIntent sentPI = PendingIntent.getBroadcast(context, 0, sendIntent, PendingIntent.FLAG_IMMUTABLE);
     Intent deliverIntent = new Intent(SMS_DELIVERED);
     deliverIntent.setFlags(Intent.FLAG_DEBUG_LOG_RESOLUTION);
     deliverIntent.setClassName("net.anei.cadpagesupport", "net.anei.cadpagesupport.ResponseSender");
-    PendingIntent deliveredPI = PendingIntent.getBroadcast(context, 0, deliverIntent, 0);
+    PendingIntent deliveredPI = PendingIntent.getBroadcast(context, 0, deliverIntent, PendingIntent.FLAG_IMMUTABLE);
 
     // The send logic apparently isn't as bulletproof as we like.  It sometimes
     // throws a null pointer exception on the other side of an RPC.  We can't
